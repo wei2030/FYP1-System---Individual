@@ -1,0 +1,50 @@
+﻿@model List<FYP1_System___Individual.Models.Student>
+
+@{
+    ViewData["Title"] = "Manage Students (Committee View)";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Create a New Student
+        </a>
+    </div>
+
+    <table class="table table-bordered table-hover shadow-sm align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Program</th>
+                <th class="text-center" style="width: 20%;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Model)
+            {
+                <tr>
+                    <td>@student.Name</td>
+                    <td>@student.Email</td>
+                    <td>@student.Program?.Name</td>
+                    <td class="text-center">
+                        <a asp-action="Edit" asp-route-id="@student.Id" class="btn btn-sm btn-warning me-1">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@student.Id" class="btn btn-sm btn-danger">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="text-start mt-3">
+        <a asp-controller="Lecturers" asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+        </a>
+    </div>
+</div>

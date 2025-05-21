@@ -1,0 +1,81 @@
+﻿@model IEnumerable<FYP1_System___Individual.Models.Proposal>
+
+@{
+    ViewData["Title"] = "Manage Proposals";
+    var semester = ViewBag.Semester as string ?? "All";
+    var session = ViewBag.Session as string ?? "All";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+
+    <form asp-action="ManageProposals" method="get" class="row g-2 align-items-end mb-4">
+        <div class="col-md-4">
+            <label class="form-label">Semester</label>
+            <select name="semester" class="form-select">
+                <option value="">-- All --</option>
+                <option value="S1" selected="@(semester == "S1")">S1</option>
+                <option value="S2" selected="@(semester == "S2")">S2</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Session</label>
+            <select name="session" class="form-select">
+                <option value="">-- All --</option>
+                <option value="2024/2025" selected="@(session == "2024/2025")">2024/2025</option>
+                <option value="2023/2024" selected="@(session == "2023/2024")">2023/2024</option>
+                <option value="2022/2023" selected="@(session == "2022/2023")">2022/2023</option>
+            </select>
+        </div>
+
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-secondary w-100">
+                <i class="bi bi-funnel-fill"></i> Filter
+            </button>
+        </div>
+    </form>
+
+    <table class="table table-bordered table-hover shadow-sm align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Student</th>
+                <th>Title</th>
+                <th>Project Type</th>
+                <th>Semester</th>
+                <th>Status</th>
+                <th>Supervisor</th>
+                <th>Supervisor Comment</th>
+                <th class="text-center" style="width: 20%;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var proposal in Model)
+            {
+                <tr>
+                    <td>@proposal.Student?.Name</td>
+                    <td>@proposal.Title</td>
+                    <td>@proposal.ProjectType</td>
+                    <td>@proposal.Semester</td>
+                    <td>@(proposal.EvaluationStatus != null ? proposal.EvaluationStatus.ToString() : "Pending")</td>
+                    <td>@proposal.Supervisor?.Name</td>
+                    <td>@(proposal.SupervisorComment != null ? proposal.SupervisorComment : "-")</td>
+                    <td class="text-center">
+                        <a asp-controller="Committees" asp-action="AssignEvaluators" asp-route-proposalId="@proposal.Id" class="btn btn-sm btn-outline-primary me-1">
+                            <i class="bi bi-person-plus"></i> Assign
+                        </a>
+                        <a asp-action="ProposalDetails" asp-route-id="@proposal.Id" class="btn btn-sm btn-outline-info">
+                            <i class="bi bi-eye"></i> Details
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="text-start mt-3">
+        <a asp-controller="Lecturers" asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+        </a>
+    </div>
+</div>

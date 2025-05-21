@@ -1,0 +1,58 @@
+﻿@model FYP1_System___Individual.Models.Proposal
+
+@{
+    ViewData["Title"] = "Proposal Details";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+
+    <div class="card shadow-sm p-4">
+        <dl class="row">
+            <dt class="col-sm-3">Title</dt>
+            <dd class="col-sm-9">@Model.Title</dd>
+
+            <dt class="col-sm-3">Student</dt>
+            <dd class="col-sm-9">@Model.Student?.Name (@Model.Student?.Email)</dd>
+
+            <dt class="col-sm-3">Supervisor</dt>
+            <dd class="col-sm-9">@Model.Supervisor?.Name</dd>
+
+            <dt class="col-sm-3">Project Type</dt>
+            <dd class="col-sm-9">@Model.ProjectType</dd>
+
+            <dt class="col-sm-3">Semester</dt>
+            <dd class="col-sm-9">@Model.Semester</dd>
+
+            <dt class="col-sm-3">File Path</dt>
+            <dd class="col-sm-9">
+                @Html.Raw(Model.FilePath != null ? Model.FilePath : "<span class=\"text-muted\">Not uploaded</span>")
+            </dd>
+
+            <dt class="col-sm-3">Supervisor Comment</dt>
+            <dd class="col-sm-9">
+                @Html.Raw(Model.SupervisorComment ?? "<span class=\"text-muted\">-</span>")
+            </dd>
+
+            <dt class="col-sm-3">Evaluation Comment</dt>
+            <dd class="col-sm-9">
+                @Html.Raw(Model.EvaluatorComment ?? "<span class=\"text-muted\">-</span>")
+            </dd>
+
+            <dt class="col-sm-3">Evaluators</dt>
+            <dd class="col-sm-9">
+                <ol class="mb-0">
+                    <li>@Html.Raw(Model.Evaluator1 != null ? Model.Evaluator1.Name : "<span class=\"text-muted\">Unassigned</span>")</li>
+                    <li>@Html.Raw(Model.Evaluator2 != null ? Model.Evaluator2.Name : "<span class=\"text-muted\">Unassigned</span>")</li>
+                </ol>
+            </dd>
+
+        </dl>
+
+        <div class="text-end mt-3">
+            <a asp-action="ManageProposals" class="btn btn-secondary">
+                <i class="bi bi-arrow-left-circle"></i> Back to Proposals
+            </a>
+        </div>
+    </div>
+</div>

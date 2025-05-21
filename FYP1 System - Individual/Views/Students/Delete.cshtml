@@ -1,0 +1,28 @@
+﻿@model FYP1_System___Individual.Models.Student
+
+@{
+    ViewData["Title"] = $"Delete Student - {Model.Name}";
+}
+
+<div class="container mt-4">
+    <h2 class="text-danger text-center mb-4">@ViewData["Title"]</h2>
+
+    <div class="alert alert-warning shadow-sm p-4">
+        <h5 class="mb-3">Are you sure you want to delete the following student?</h5>
+
+        <p><strong>Name:</strong> @Model.Name</p>
+        <p><strong>Email:</strong> @Model.Email</p>
+        <p><strong>Program:</strong> @Model.Program?.Name</p>
+
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <button type="submit" class="btn btn-danger me-2">
+                <i class="bi bi-trash"></i> Confirm Delete
+            </button>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left-circle"></i> Cancel
+            </a>
+        </form>
+    </div>
+</div>

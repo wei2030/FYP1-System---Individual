@@ -1,0 +1,43 @@
+﻿@model FYP1_System___Individual.Models.Proposal
+@{
+    ViewData["Title"] = "Supervisor Agreement";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
+
+    <div class="card shadow-sm p-4">
+        <h4 class="mb-3">Proposal: <strong>@Model.Title</strong></h4>
+
+        <dl class="row">
+            <dt class="col-sm-3">Supervisor</dt>
+            <dd class="col-sm-9">@Model.Supervisor?.Name</dd>
+
+            <dt class="col-sm-3">Project Type</dt>
+            <dd class="col-sm-9">@Model.ProjectType.ToString()</dd>
+
+            <dt class="col-sm-3">Semester</dt>
+            <dd class="col-sm-9">@Model.Semester</dd>
+
+            <dt class="col-sm-3">Session</dt>
+            <dd class="col-sm-9">@Model.Session</dd>
+        </dl>
+
+        <hr />
+
+        <h5>Agreement Details</h5>
+        <p>
+            By proceeding, you acknowledge and agree that the selected supervisor will oversee your project
+            and provide guidance throughout the duration of your research/development work.
+        </p>
+        <p>
+            Please ensure clear communication and timely updates with your supervisor.
+        </p>
+
+        <div class="d-flex justify-content-center mt-4">
+            <a asp-controller="Students" asp-action="Index" class="btn btn-primary">
+                <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>

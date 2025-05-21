@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">@ViewData["Title"]</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <a asp-controller="AcademicPrograms" asp-action="Index" class="btn btn-primary w-100 py-3">
+                Academic Programs <br />
+                <span class="fs-3">@ViewBag.TotalPrograms</span>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a asp-controller="Lecturers" asp-action="Index" class="btn btn-success w-100 py-3">
+                Lecturers <br />
+                <span class="fs-3">@ViewBag.TotalLecturers</span>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a asp-action="ManageCommittees" class="btn btn-info w-100 py-3">
+                Committee Members <br />
+                <span class="fs-3">@ViewBag.TotalCommittees</span>
+            </a>
+        </div>
+    </div>
+</div>

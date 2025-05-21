@@ -1,0 +1,53 @@
+﻿@model IEnumerable<FYP1_System___Individual.Models.Lecturer>
+@using FYP1_System___Individual.Models
+
+@{
+    ViewData["Title"] = "Assign Domain to Lecturer";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+
+    <table class="table table-bordered table-hover shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Lecturer Name</th>
+                <th>Program</th>
+                <th>Current Domain</th>
+                <th class="text-center">Assign Domain</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var lecturer in Model)
+            {
+                <tr>
+                    <td>@lecturer.Name</td>
+                    <td>@(lecturer.Program != null ? lecturer.Program.Name : "Not Assigned")</td>
+                    <td>@(lecturer.Domain != null ? lecturer.Domain.ToString() : "Not Assigned")</td>
+                    <td class="text-center">
+                        <form asp-action="AssignDomain" method="post" class="d-flex justify-content-center align-items-center gap-2">
+                            <input type="hidden" name="lecturerId" value="@lecturer.Id" />
+                            <select name="domain" class="form-select form-select-sm w-auto">
+                                @foreach (DomainType domain in Enum.GetValues(typeof(DomainType)))
+                                {
+                                    <option value="@domain" selected="@(lecturer.Domain == domain)">
+                                        @domain
+                                    </option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary">
+                                <i class="bi bi-check-circle"></i> Assign
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="text-start mt-3">
+        <a asp-controller="Lecturers" asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+        </a>
+    </div>
+</div>

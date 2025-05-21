@@ -1,0 +1,58 @@
+﻿@model FYP1_System___Individual.Models.Proposal
+
+@{
+    ViewData["Title"] = "Evaluate Proposal";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+
+    <div class="card shadow-sm p-4">
+        <dl class="row">
+            <dt class="col-sm-3">Proposal Title</dt>
+            <dd class="col-sm-9">@Model.Title</dd>
+
+            <dt class="col-sm-3">Student</dt>
+            <dd class="col-sm-9">@Model.Student?.Name (@Model.Student?.Email)</dd>
+
+            <dt class="col-sm-3">Supervisor</dt>
+            <dd class="col-sm-9">@Model.Supervisor?.Name</dd>
+
+            <dt class="col-sm-3">Supervisor Comment</dt>
+            <dd class="col-sm-9">@Html.Raw(Model.SupervisorComment != null ? Model.SupervisorComment.ToString() :"<span class=\"text-muted\">-</span>")</dd>
+        </dl>
+
+        <hr />
+
+        <form asp-action="Evaluate" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="EvaluationStatus" class="form-label">Evaluation Status</label>
+                <select asp-for="EvaluationStatus" class="form-select">
+                    <option value="">-- Select --</option>
+                    @foreach (ProposalStatus status in Enum.GetValues(typeof(ProposalStatus)))
+                    {
+                        <option value="@status">@status</option>
+                    }
+                </select>
+                <span asp-validation-for="EvaluationStatus" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="EvaluatorComment" class="form-label">Evaluator Comment</label>
+                <textarea asp-for="EvaluatorComment" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="EvaluatorComment" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex justify-content-start">
+                <button type="submit" class="btn btn-success me-2">
+                    <i class="bi bi-check-circle"></i> Submit Evaluation
+                </button>
+                <a asp-action="AssignedProposals" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left-circle"></i> Back
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

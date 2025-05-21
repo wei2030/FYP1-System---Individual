@@ -1,0 +1,111 @@
+﻿@model FYP1_System___Individual.Models.Student
+@using FYP1_System___Individual.Models
+
+@{
+    ViewData["Title"] = "Student Dashboard";
+    var proposal = ViewBag.Proposal as Proposal;
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h2 class="card-title mb-4 text-center">@ViewData["Title"]</h2>
+
+            <div class="mb-4 text-center">
+                <h4>Welcome, <strong>@Model.Name</strong></h4>
+                <p class="mb-0"><strong>Academic Program:</strong> @(Model.Program?.Name ?? "Not assigned")</p>
+            </div>
+
+            @if (proposal != null)
+            {
+                <h5 class="mb-3">Your Proposal</h5>
+                <table class="table table-bordered table-hover shadow-sm">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Title</th>
+                            <th>Project Type</th>
+                            <th>Semester</th>
+                            <th>Status</th>
+                            <th>Supervisor</th>
+                            <th style="width: 160px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@proposal.Title</td>
+                            <td>@proposal.ProjectType</td>
+                            <td>@proposal.Semester</td>
+                            <td>
+                                @switch (proposal.EvaluationStatus)
+                                {
+                                    case ProposalStatus.Accepted:
+                                        <span class="badge bg-success">Accepted</span>
+                                        break;
+                                    case ProposalStatus.AcceptedWithConditions:
+                                        <span class="badge bg-warning text-dark">Accepted with Conditions</span>
+                                        break;
+                                    case ProposalStatus.Rejected:
+                                        <span class="badge bg-danger">Rejected</span>
+                                        break;
+                                    default:
+                                        <span class="badge bg-secondary">Pending</span>
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                @if (proposal.SupervisorStatus == SupervisorStatus.PendingSupervisorSelection)
+                                {
+                                    <a asp-controller="Proposals" asp-action="SelectSupervisor" asp-route-proposalId="@proposal.Id" class="btn btn-primary btn-sm me-1">
+                                        <i class="bi bi-person-check"></i> Select Supervisor
+                                    </a>
+                                }
+                                else if (proposal.SupervisorStatus == SupervisorStatus.SupervisorSelectionPendingApproval)
+                                {
+                                    <a asp-controller="Proposals" asp-action="SelectSupervisor" asp-route-proposalId="@proposal.Id" class="btn btn-warning btn-sm me-1">
+                                        <i class="bi bi-person-check"></i> Change Supervisor
+                                    </a>
+                                }
+                                else if (proposal.SupervisorStatus == SupervisorStatus.SupervisorApproved)
+                                {
+                                    @(proposal.Supervisor != null ? proposal.Supervisor.Name : "N/A");
+                                }
+                            </td>
+                            <td>
+                                @if (proposal.SupervisorStatus == SupervisorStatus.SupervisorApproved)
+                                {
+                                    <a asp-controller="Students" asp-action="Agreement" asp-route-proposalId="@proposal.Id" class="btn btn-info btn-sm me-1">
+                                        <i class="bi bi-eye"></i> View Supervisor Agreement
+                                    </a>
+                                }
+
+                                <a asp-controller="Proposals" asp-action="Details" asp-route-id="@proposal.Id" class="btn btn-info btn-sm me-1">
+                                    <i class="bi bi-eye"></i> Details
+                                </a>
+
+                                @if (proposal.EvaluationStatus == ProposalStatus.AcceptedWithConditions || proposal.EvaluationStatus == ProposalStatus.Rejected)
+                                {
+                                    <a asp-controller="Proposals" asp-action="Edit1" asp-route-id="@proposal.Id" class="btn btn-warning btn-sm">
+                                        <i class="bi bi-pencil-square"></i> Resubmit
+                                    </a>
+                                }
+
+                                <a asp-controller="Proposals" asp-action="Delete" asp-route-id="@proposal.Id" class="btn btn-sm btn-danger me-1">
+                                    <i class="bi bi-eye"></i> Remove
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="alert alert-info text-center my-5">
+                    <h5>You have not submitted any proposal yet.</h5>
+                    <a asp-controller="Proposals" asp-action="Create1" class="btn btn-success mt-3 px-4">
+                        <i class="bi bi-plus-circle"></i> Create Proposal
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

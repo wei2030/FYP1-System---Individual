@@ -1,0 +1,53 @@
+﻿@model FYP1_System___Individual.Models.Proposal
+
+@{
+    ViewData["Title"] = "Select Supervisor";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-info text-center">
+            @TempData["Message"]
+        </div>
+    }
+
+    <div class="card shadow-sm p-4">
+        <p><strong>Proposal:</strong> @Model.Title</p>
+
+        <form asp-action="SelectSupervisor" method="post">
+            <input type="hidden" asp-for="Id" name="proposalId" />
+
+            <div class="mb-3">
+                <label for="supervisorId" class="form-label fw-semibold">Select Supervisor</label>
+                <select name="supervisorId" id="supervisorId" class="form-select" required>
+                    <option value="">-- Select Supervisor --</option>
+                    @foreach (var sup in (SelectList)ViewBag.Supervisors)
+                    {
+                        <option value="@sup.Value">
+                            @sup.Text
+                        </option>
+                    }
+                </select>
+                <span asp-validation-for="SupervisorId" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1">
+                    <i class="bi bi-check-lg"></i> Submit for Approval
+                </button>
+                <a asp-action="Index" class="btn btn-secondary flex-grow-1">
+                    <i class="bi bi-x-lg"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

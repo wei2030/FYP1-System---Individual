@@ -1,0 +1,50 @@
+﻿@model IEnumerable<FYP1_System___Individual.Models.Proposal>
+
+@{
+    ViewData["Title"] = "Assigned Proposals";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+
+    <table class="table table-bordered table-hover shadow-sm align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Student</th>
+                <th>Title</th>
+                <th>Supervisor</th>
+                <th>Project Type</th>
+                <th>Semester</th>
+                <th>Supervisor Comment</th>
+                <th>Status</th>
+                <th class="text-center" style="width: 20%;">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var proposal in Model)
+            {
+                <tr>
+                    <td>@proposal.Student?.Name</td>
+                    <td>@proposal.Title</td>
+                    <td>@proposal.Supervisor?.Name</td>
+                    <td>@proposal.ProjectType.ToString()</td>
+                    <td>@proposal.Semester</td>
+                    <td>@Html.Raw(proposal.SupervisorComment != null ? proposal.SupervisorComment :"<span class=\"text-muted\">-</span>")</td>
+                    <td>@(proposal.EvaluationStatus != null ? proposal.EvaluationStatus.ToString() : "Pending")</td>
+                    <td class="text-center">
+                        <a asp-action="Evaluate" asp-route-id="@proposal.Id" class="btn btn-sm btn-outline-primary me-1">
+                            <i class="bi bi-pencil-square"></i> Evaluate
+                        </a>
+                        @if (!string.IsNullOrEmpty(proposal.FilePath))
+                        {
+                            <a asp-action="Downloads" asp-route-path="@proposal.FilePath" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-download"></i> Download
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

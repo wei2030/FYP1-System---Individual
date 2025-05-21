@@ -1,0 +1,55 @@
+﻿@model FYP1_System___Individual.Models.Proposal
+
+@{
+    ViewData["Title"] = "Proposal Details";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
+
+    <div class="card shadow-sm p-4">
+        <dl class="row">
+            <dt class="col-sm-3">Proposal Title</dt>
+            <dd class="col-sm-9">@Model.Title</dd>
+
+            <dt class="col-sm-3">Student</dt>
+            <dd class="col-sm-9">@Model.Student?.Name</dd>
+
+            <dt class="col-sm-3">Supervisor</dt>
+            <dd class="col-sm-9">@Model.Supervisor?.Name</dd>
+
+            <dt class="col-sm-3">Project Type</dt>
+            <dd class="col-sm-9">@Model.ProjectType</dd>
+
+            <dt class="col-sm-3">Semester</dt>
+            <dd class="col-sm-9">@Model.Semester</dd>
+
+            <dt class="col-sm-3">Session</dt>
+            <dd class="col-sm-9">@Model.Session</dd>
+
+            <dt class="col-sm-3">Evaluation Status</dt>
+            <dd class="col-sm-9">@(Model.EvaluationStatus != null ? Model.EvaluationStatus.ToString() : "Pending")</dd>
+        </dl>
+
+        <hr />
+
+        <h5 class="mb-3">Supervisor Comments</h5>
+
+        <form asp-action="CommentOnProposal" method="post">
+            <input type="hidden" name="id" value="@Model.Id" />
+
+            <div class="mb-3">
+                <textarea name="supervisorComment" class="form-control" rows="4" placeholder="Enter your comments here...">@Model.SupervisorComment</textarea>
+            </div>
+
+            <div class="d-flex justify-content-start">
+                <button type="submit" class="btn btn-success me-2">
+                    <i class="bi bi-save"></i> Save Comment
+                </button>
+                <a asp-action="MyStudents" asp-route-supervisorId="@Model.SupervisorId" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left-circle"></i> Back
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

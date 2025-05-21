@@ -1,0 +1,65 @@
+﻿@model FYP1_System___Individual.Models.Proposal
+
+@{
+    ViewData["Title"] = "Proposal Details";
+
+    var roles = Context.Session.GetString("Roles");
+    bool isStudent = roles.Split(',').Contains("Student");
+    bool isLecturer = roles.Split(',').Contains("Lecturer") || roles.Split(',').Contains("Supervisor");
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
+
+    <div class="card shadow-sm p-4">
+        <h4 class="mb-3"><strong>Proposal Title:</strong> @Model.Title</h4>
+
+        <div class="mb-2"><strong>Student:</strong> @Model.Student?.Name</div>
+        <div class="mb-2"><strong>Supervisor:</strong> @Model.Supervisor?.Name</div>
+        <div class="mb-2"><strong>Project Type:</strong> @Model.ProjectType</div>
+        <div class="mb-2"><strong>Semester:</strong> @Model.Semester</div>
+        <div class="mb-2"><strong>Session:</strong> @Model.Session</div>
+
+        <div class="mb-2"><strong>Supervisor Comment:</strong><br />@(Model.SupervisorComment != null ? Model.SupervisorComment : "-")</div>
+
+        <div class="mb-2"><strong>Evaluation Status:</strong> @(Model.EvaluationStatus != null ? Model.EvaluationStatus.ToString() : "Pending")</div>
+        <div class="mb-2"><strong>Evaluator Comment:</strong><br />@(Model.EvaluatorComment != null ? Model.EvaluatorComment : "-")</div>
+
+        <div class="mb-2">
+            <strong>Evaluators:</strong>
+            <ul>
+                <li>@(Model.Evaluator1 != null ? Model.Evaluator1.Name : "Unassigned")</li>
+                <li>@(Model.Evaluator2 != null ? Model.Evaluator2.Name : "Unassigned")</li>
+            </ul>
+        </div>
+
+        @* @if (!string.IsNullOrEmpty(Model.FilePath))
+        {
+            <div class="mb-3">
+                <strong>Attached File:</strong>
+                <a asp-controller="Evaluators" asp-action="DownloadDocument" asp-route-path="@Model.FilePath" class="btn btn-sm btn-outline-secondary ms-2">
+                    <i class="bi bi-download"></i> Download PDF
+                </a>
+            </div>
+        } *@
+
+        <div class="mt-4">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">
+                <i class="bi bi-pencil-square"></i> Edit
+            </a>
+
+            @if (isStudent)
+            {
+                <a asp-controller="Students" asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+                </a>
+            }
+            else if (isLecturer)
+            {
+                <a asp-controller="Lecturers" asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+                </a>
+            }
+        </div>
+    </div>
+</div>

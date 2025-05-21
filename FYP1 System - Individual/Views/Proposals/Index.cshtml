@@ -1,0 +1,58 @@
+﻿@model IEnumerable<FYP1_System___Individual.Models.Proposal>
+
+@{
+    ViewData["Title"] = "Proposal Management";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a asp-action="Create1" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Create New Proposal
+        </a>
+    </div>
+
+    <table class="table table-bordered table-hover shadow-sm align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Title</th>
+                <th>Student</th>
+                <th>Supervisor</th>
+                <th>Project Type</th>
+                <th>Semester</th>
+                <th>Supervisor Comment</th>
+                <th>Status</th>
+                <th class="text-center" style="width: 25%;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var proposal in Model)
+            {
+                <tr>
+                    <td>@proposal.Title</td>
+                    <td>@proposal.Student?.Name</td>
+                    <td>@proposal.Supervisor?.Name</td>
+                    <td>@proposal.ProjectType</td>
+                    <td>@proposal.Semester</td>
+                    <td>@(proposal.SupervisorComment != null ? proposal.SupervisorComment : "-")</td>
+                    <td>@(proposal.EvaluationStatus != null ? proposal.EvaluationStatus.ToString() : "Pending")</td>
+                    <td class="text-center">
+                        <a asp-action="Details" asp-route-id="@proposal.Id" class="btn btn-sm btn-info me-1">
+                            <i class="bi bi-eye"></i> Details
+                        </a>
+                        <a asp-action="Edit1" asp-route-id="@proposal.Id" class="btn btn-sm btn-warning me-1">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@proposal.Id" class="btn btn-sm btn-danger me-1">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                        <a asp-action="AssignEvaluators" asp-route-id="@proposal.Id" class="btn btn-sm btn-primary">
+                            <i class="bi bi-person-plus"></i> Assign
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

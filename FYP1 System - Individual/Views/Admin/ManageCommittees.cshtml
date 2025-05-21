@@ -1,0 +1,61 @@
+﻿@model IEnumerable<FYP1_System___Individual.Models.Lecturer>
+@{
+    ViewData["Title"] = "Manage Committee Members";
+    var grouped = Model.GroupBy(l => l.Program?.Name ?? "No Program");
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
+
+    @foreach (var group in grouped)
+    {
+        <h4 class="mt-4">Program: @group.Key</h4>
+        <table class="table table-bordered table-hover shadow-sm align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Committee Status</th>
+                    <th class="text-center" style="width: 20%">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var lecturer in group)
+                {
+                    <tr>
+                        <td>@lecturer.Name</td>
+                        <td>@lecturer.Email</td>
+                        <td>@(lecturer.HasRole("Committee") ? "Yes" : "No")</td>
+                        <td class="text-center">
+                            @if (lecturer.HasRole("Committee"))
+                            {
+                                <form asp-action="RemoveCommittee" method="post" class="d-inline">
+                                    <input type="hidden" name="lecturerId" value="@lecturer.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-x-circle"></i> Remove Committee
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-action="AddCommittee" method="post" class="d-inline">
+                                    <input type="hidden" name="lecturerId" value="@lecturer.Id" />
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="bi bi-x-circle"></i> Add as Committee
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    
+    <div class="text-start mt-3">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+        </a>
+    </div>
+</div>

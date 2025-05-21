@@ -1,0 +1,95 @@
+﻿@model FYP1_System___Individual.Models.Lecturer
+
+@{
+    ViewData["Title"] = "Lecturer Dashboard";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">@ViewData["Title"]</h2>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h4 class="card-title">Welcome, <strong>@Model.Name</strong>!</h4>
+            <p class="mb-1">
+                <strong>Academic Program:</strong> @(Model.Program != null ? Model.Program.Name : "Not assigned")
+            </p>
+            <p>
+                <strong>Domain:</strong> @(Model.Domain.HasValue ? Model.Domain.ToString() : "Not assigned")
+            </p>
+        </div>
+    </div>
+
+    @if (Context.Session.GetString("Roles")?.Split(',').Contains("Committee") == true)
+    {
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header fw-semibold">
+                Committee Actions
+            </div>
+            <div class="card-body d-flex gap-3 flex-wrap">
+                <a href="@Url.Action("AssignDomain", "Committees")" class="btn btn-primary flex-fill">
+                    <i class="bi bi-gear me-1"></i> Assign Domain
+                </a>
+                <a href="@Url.Action("ManageStudents", "Students", new { programId = Model.ProgramId })" class="btn btn-success flex-fill">
+                    <i class="bi bi-people me-1"></i> Manage Students
+                </a>
+                <a href="@Url.Action("ManageProposals", "Committees")" class="btn btn-secondary flex-fill">
+                    <i class="bi bi-folder2-open me-1"></i> Manage Proposals
+                </a>
+                <a href="@Url.Action("PendingSupervisorApprovals", "Committees")" class="btn btn-secondary flex-fill">
+                    <i class="bi bi-person-check me-1"></i> Pending Supervisor Approvals
+                </a>
+            </div>
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Supervised Proposals</h4>
+        <a href="@Url.Action("MyStudents", "Supervisors")" class="btn btn-info btn-sm">
+            <i class="bi bi-people-fill me-1"></i> My Students
+        </a>
+    </div>
+
+    @if (Model.SupervisedProposals != null && Model.SupervisedProposals.Any())
+    {
+        <table class="table table-striped table-hover shadow-sm align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Title</th>
+                    <th>Student</th>
+                    <th>Semester</th>
+                    <th>Status</th>
+                    <th style="width: 180px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var proposal in Model.SupervisedProposals)
+                {
+                    <tr>
+                        <td>@proposal.Title</td>
+                        <td>@proposal.Student?.Name</td>
+                        <td>@proposal.Semester</td>
+                        <td>@(proposal.EvaluationStatus != null ? proposal.EvaluationStatus.ToString() : "Pending")</td>
+                        <td>
+                            <a asp-controller="Supervisors" asp-action="ViewProposal" asp-route-id="@proposal.Id" class="btn btn-sm btn-info me-1">
+                                <i class="bi bi-eye"></i> Details
+                            </a>
+
+                            @if (proposal.SupervisorStatus == SupervisorStatus.SupervisorApproved)
+                            {
+                                <a asp-controller="Supervisors" asp-action="Agreement" asp-route-proposalId="@proposal.Id" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-file-earmark-text"></i> View Agreement
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            You have no supervised proposals yet.
+        </div>
+    }
+</div>
