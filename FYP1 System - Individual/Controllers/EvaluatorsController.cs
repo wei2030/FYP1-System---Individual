@@ -23,39 +23,55 @@ namespace FYP1_System___Individual.Controllers
             return roles.Contains(role, StringComparer.OrdinalIgnoreCase);
         }
 
-        public async Task<IActionResult> AssignedProposals(int evaluatorId)
+        public async Task<IActionResult> AssignedProposals()
         {
+            if (!IsAuthorized("Evaluator")) return RedirectToAction("Index", "Home");
+
+            var evaluatorId = HttpContext.Session.GetInt32("UserId");
+            if (evaluatorId == null) return RedirectToAction("Index", "Home");
+
             var proposal = await _context.Proposals
                 .Include(p => p.Student)
                 .Include(p => p.Supervisor)
                 .Where(p => p.Evaluator1Id == evaluatorId || p.Evaluator2Id == evaluatorId)
                 .ToListAsync();
 
-            ViewBag.EvaluatorId = evaluatorId;
             return View(proposal);
         }
 
-        public async Task<IActionResult> Evaluate(int id)
+        [HttpGet]
+        public async Task<IActionResult> Evaluate(int proposalId)
         {
+            if (!IsAuthorized("Evaluator")) return RedirectToAction("Index", "Home");
+
+            var evaluatorId = HttpContext.Session.GetInt32("UserId");
+            if (evaluatorId == null) return RedirectToAction("Index", "Home");
+
             var proposal = await _context.Proposals
                 .Include(p => p.Student)
                 .Include(p => p.Supervisor)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .FirstOrDefaultAsync(p => p.Id == proposalId && (p.Evaluator1Id == evaluatorId || p.Evaluator2Id == evaluatorId));
+
             if (proposal == null) return NotFound();
             return View(proposal);
         }
         [HttpPost]
         public async Task<IActionResult> Evaluate(int id, [Bind("Id, EvaluationStatus, EvaluatorComment")] Proposal updatedProposal)
         {
-            var proposal = await _context.Proposals.FindAsync(id);
-            if(proposal == null) return NotFound();
+            if (!IsAuthorized("Evaluator")) return RedirectToAction("Index", "Home");
+
+            var evaluatorId = HttpContext.Session.GetInt32("UserId");
+            if (evaluatorId == null) return RedirectToAction("Index", "Home");
+
+            var proposal = await _context.Proposals
+                .FirstOrDefaultAsync(p => p.Id == id && (p.Evaluator1Id == evaluatorId || p.Evaluator2Id == evaluatorId));
+            if (proposal == null) return NotFound();
 
             proposal.EvaluationStatus = updatedProposal.EvaluationStatus;
             proposal.EvaluatorComment = updatedProposal.EvaluatorComment;
 
             await _context.SaveChangesAsync();
-            // should be session evaluatorId /////////////////////////////////////////////////////////////////
-            return RedirectToAction("AssignedProposals", new { evaluatorId = proposal.Evaluator1Id ?? proposal.Evaluator2Id });
+            return RedirectToAction("AssignedProposals");
         }
 
         public IActionResult Downloads(string path)

@@ -29,11 +29,11 @@
 
             <div class="mb-3">
                 <label asp-for="EvaluationStatus" class="form-label">Evaluation Status</label>
-                <select asp-for="EvaluationStatus" class="form-select">
+                <select asp-for="EvaluationStatus" class="form-select" required>
                     <option value="">-- Select --</option>
                     @foreach (ProposalStatus status in Enum.GetValues(typeof(ProposalStatus)))
                     {
-                        <option value="@status">@status</option>
+                        <option value="@status" selected="@(Model.EvaluationStatus == status ? "selected" : null)">@status</option>
                     }
                 </select>
                 <span asp-validation-for="EvaluationStatus" class="text-danger"></span>
