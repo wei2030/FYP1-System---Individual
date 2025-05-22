@@ -50,7 +50,10 @@ namespace FYP1_System___Individual.Controllers
             return View(proposal);
         }
         [HttpPost]
-        public async Task<IActionResult> Create2([Bind("Id, Title, ProjectType, FilePath, Semester, Session, StudentId")] Proposal proposal)
+        public async Task<IActionResult> Create2(
+            [Bind("Id, Title, ProjectType, FilePath, Semester, Session, StudentId")] Proposal proposal, 
+            IFormFile OnlineProposalFormFile, 
+            IFormFile ProposalDocumentFile)
         {
             if (!IsAuthorized("Student")) return RedirectToAction("Index", "Students");
 
@@ -60,13 +63,44 @@ namespace FYP1_System___Individual.Controllers
             proposal.StudentId = userId.Value;
             proposal.SupervisorStatus = SupervisorStatus.PendingSupervisorSelection;
 
+            if (OnlineProposalFormFile == null || OnlineProposalFormFile.Length == 0)
+            {
+                ModelState.AddModelError("OnlineProposalFormFile", "Online proposal form file is required");
+            }
+
+            if (ProposalDocumentFile == null || ProposalDocumentFile.Length == 0)
+            {
+                ModelState.AddModelError("ProposalDocumentFile", "Online proposal form file is required");
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(proposal);
             }
 
+            var onlineFormFileName = $"{Guid.NewGuid()}_{Path.GetFileName(OnlineProposalFormFile.FileName)}";
+            var onlineFormPath = Path.Combine("uploads", onlineFormFileName);
+            var fullOnlineFormPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", onlineFormPath);
+
+            using (var stream = new FileStream(fullOnlineFormPath, FileMode.Create))
+            {
+                await OnlineProposalFormFile.CopyToAsync(stream);
+            }
+            proposal.OnlineProposalFormPath = "/" + onlineFormPath.Replace("\\", "/");
+
+            var proposalDocFileName = $"{Guid.NewGuid()}_{Path.GetFileName(ProposalDocumentFile.FileName)}";
+            var proposalDocPath = Path.Combine("uploads", proposalDocFileName);
+            var fullProposalDocPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", proposalDocPath);
+
+            using (var stream = new FileStream(fullProposalDocPath, FileMode.Create))
+            {
+                await ProposalDocumentFile.CopyToAsync(stream);
+            }
+            proposal.ProposalDocumentPath = "/" + proposalDocPath.Replace("\\", "/");
+
             _context.Proposals.Add(proposal);
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Index", "Students");
         }
 
@@ -151,32 +185,60 @@ namespace FYP1_System___Individual.Controllers
             return View(proposal);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit2(int id, [Bind("Id, Title, ProjectType, FilePath, Semester, Session, StudentId, SupervisorId")] Proposal proposal)
+        public async Task<IActionResult> Edit2(int id, [Bind("Id, Title, ProjectType, FilePath, Semester, Session, StudentId")] Proposal proposal,
+            IFormFile? ProposalDocumentFile, IFormFile? OnlineProposalFormFile)
         {
             if (!IsAuthorized("Student")) return RedirectToAction("Index", "Students");
 
             if (id != proposal.Id) return NotFound();
 
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null || proposal.StudentId != userId.Value) return Forbid();
+
             if (!ModelState.IsValid)
             {
                 ViewBag.StudentId = proposal.StudentId;
                 ViewBag.Lecturers = new SelectList(_context.Lecturers.Where(l => l.Domain == proposal.ProjectType), "Id", "Name", proposal.SupervisorId);
-
                 return View(proposal);
             }
 
-            var supervisor = await _context.Lecturers.FindAsync(proposal.SupervisorId);
-            if (supervisor == null || supervisor.Domain != proposal.ProjectType)
-            {
-                ModelState.AddModelError("SupervisorId", "Selected supervisor does not match the selected project type");
-                ViewBag.StudentId = proposal.StudentId;
-                ViewBag.Lecturers = new SelectList(_context.Lecturers.Where(l => l.Domain == proposal.ProjectType), "Id", "Name", proposal.SupervisorId);
+            var existingProposal = await _context.Proposals.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+            if (existingProposal == null) return NotFound();
 
-                return View(proposal);
+            if (ProposalDocumentFile != null && ProposalDocumentFile.Length > 0)
+            {
+                var proposalDocFileName = $"{Guid.NewGuid()}_{ProposalDocumentFile.FileName}";
+                var proposalDocFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", proposalDocFileName);
+
+                using var stream = new FileStream(proposalDocFilePath, FileMode.Create);
+                await ProposalDocumentFile.CopyToAsync(stream);
+
+                proposal.ProposalDocumentPath = proposalDocFileName;
+            }
+            else
+            {
+                proposal.ProposalDocumentPath = existingProposal.ProposalDocumentPath;
+            }
+
+
+            if (OnlineProposalFormFile != null && OnlineProposalFormFile.Length > 0)
+            {
+                var onlineFormFileName = $"{Guid.NewGuid()}_{OnlineProposalFormFile.FileName}";
+                var onlineFormFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", onlineFormFileName);
+
+                using var stream = new FileStream(onlineFormFilePath, FileMode.Create);
+                await OnlineProposalFormFile.CopyToAsync(stream);
+
+                proposal.OnlineProposalFormPath = onlineFormFileName;
+            }
+            else
+            {
+                proposal.OnlineProposalFormPath = existingProposal.OnlineProposalFormPath;
             }
 
             _context.Update(proposal);
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Index", "Students");
         }
 
@@ -228,6 +290,19 @@ namespace FYP1_System___Individual.Controllers
                 .FirstOrDefaultAsync(p => p.Id == id);
             if (proposal == null) return NotFound();
             return View(proposal);
+        }
+
+        public IActionResult DownloadFile(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return NotFound();
+
+            if (path.StartsWith("/")) path = path.Substring(1);
+
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path);
+            if (!System.IO.File.Exists(filePath)) return NotFound();
+
+            var contentType = "application/pdf";
+            return PhysicalFile(filePath, contentType, Path.GetFileName(filePath));
         }
     }
 }

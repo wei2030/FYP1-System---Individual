@@ -17,7 +17,8 @@ namespace FYP1_System___Individual.Models
         public string Title { get; set; } = string.Empty;
         [Required]
         public DomainType ProjectType { get; set; }
-        public string? FilePath { get; set; }
+        public string? ProposalDocumentPath { get; set; }
+        public string? OnlineProposalFormPath { get; set; }
 
         public ProposalStatus? EvaluationStatus { get; set; }
         [StringLength(1000)]

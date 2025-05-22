@@ -7,7 +7,7 @@
     <h2 class="text-center mb-4">@ViewData["Title"]</h2>
 
     <div class="card shadow-sm p-4">
-        <form asp-action="Create2" method="post">
+        <form asp-action="Create2" method="post" enctype="multipart/form-data">
             <input type="hidden" asp-for="ProjectType" />
             <input type="hidden" asp-for="StudentId" />
 
@@ -35,8 +35,21 @@
             </div>
 
             <div class="mb-3">
-                <label asp-for="FilePath" class="form-label">Proposal File Path (optional)</label>
-                <input asp-for="FilePath" class="form-control" />
+                <a href="https://comp.utm.my/psm/wp-content/uploads/sites/2566/2024/10/PSM1.PF_.05u-1.docx" target="_blank" class="btn btn-primary mb-3">
+                    Download Online Proposal Form
+                </a>
+            </div>
+
+            <div class="mb-3">
+                <label for="OnlineProposalFormFile" class="form-label">Upload Completed Online Proposal Form</label>
+                <input type="file" name="OnlineProposalFormFile" class="form-control" required />
+                <span asp-validation-for="OnlineProposalFormPath" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="ProposalDocumentFile" class="form-label">Upload Proposal Document</label>
+                <input type="file" name="ProposalDocumentFile" class="form-control" required />
+                <span asp-validation-for="ProposalDocumentPath" class="text-danger"></span>
             </div>
 
             <div class="d-flex justify-content-start">

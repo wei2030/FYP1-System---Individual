@@ -31,6 +31,26 @@
             <dd class="col-sm-9">@(Model.EvaluationStatus != null ? Model.EvaluationStatus.ToString() : "Pending")</dd>
         </dl>
 
+        @if (!string.IsNullOrEmpty(Model.OnlineProposalFormPath))
+        {
+            <div class="mb-3">
+                <strong>Online Proposal Form:</strong>
+                <a asp-controller="Proposals" asp-action="DownloadFile" asp-route-path="@Model.OnlineProposalFormPath.TrimStart('/')" class="btn btn-sm btn-outline-primary ms-2" target="_blank" rel="noopener">
+                    <i class="bi bi-download"></i> Download Online Proposal Form
+                </a>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.ProposalDocumentPath))
+        {
+            <div class="mb-3">
+                <strong>Proposal Document:</strong>
+                <a asp-controller="Proposals" asp-action="DownloadFile" asp-route-path="@Model.ProposalDocumentPath.TrimStart('/')" class="btn btn-sm btn-outline-secondary ms-2" target="_blank" rel="noopener">
+                    <i class="bi bi-download"></i> Download Proposal Document
+                </a>
+            </div>
+        }
+
         <hr />
 
         <h5 class="mb-3">Supervisor Comments</h5>

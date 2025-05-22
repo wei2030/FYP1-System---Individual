@@ -43,13 +43,6 @@
                             <a asp-action="Evaluate" asp-route-proposalId="@proposal.Id" class="btn btn-sm btn-outline-primary me-1">
                                 <i class="bi bi-pencil-square"></i> Evaluate
                             </a>
-
-                            @if (!string.IsNullOrEmpty(proposal.FilePath))
-                            {
-                                <a asp-action="Downloads" asp-route-path="@proposal.FilePath" class="btn btn-sm btn-outline-secondary">
-                                    <i class="bi bi-download"></i> Download
-                                </a>
-                            }
                         </td>
                     </tr>
                 }

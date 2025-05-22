@@ -24,11 +24,6 @@
             <dt class="col-sm-3">Semester</dt>
             <dd class="col-sm-9">@Model.Semester</dd>
 
-            <dt class="col-sm-3">File Path</dt>
-            <dd class="col-sm-9">
-                @Html.Raw(Model.FilePath != null ? Model.FilePath : "<span class=\"text-muted\">Not uploaded</span>")
-            </dd>
-
             <dt class="col-sm-3">Supervisor Comment</dt>
             <dd class="col-sm-9">
                 @Html.Raw(Model.SupervisorComment ?? "<span class=\"text-muted\">-</span>")
@@ -46,6 +41,26 @@
                     <li>@Html.Raw(Model.Evaluator2 != null ? Model.Evaluator2.Name : "<span class=\"text-muted\">Unassigned</span>")</li>
                 </ol>
             </dd>
+
+            @if (!string.IsNullOrEmpty(Model.OnlineProposalFormPath))
+            {
+                <div class="mb-3">
+                    <strong>Online Proposal Form:</strong>
+                    <a asp-controller="Proposals" asp-action="DownloadFile" asp-route-path="@Model.OnlineProposalFormPath.TrimStart('/')" class="btn btn-sm btn-outline-primary ms-2" target="_blank" rel="noopener">
+                        <i class="bi bi-download"></i> Download Online Proposal Form
+                    </a>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.ProposalDocumentPath))
+            {
+                <div class="mb-3">
+                    <strong>Proposal Document:</strong>
+                    <a asp-controller="Proposals" asp-action="DownloadFile" asp-route-path="@Model.ProposalDocumentPath.TrimStart('/')" class="btn btn-sm btn-outline-secondary ms-2" target="_blank" rel="noopener">
+                        <i class="bi bi-download"></i> Download Proposal Document
+                    </a>
+                </div>
+            }
 
         </dl>
 

@@ -35,6 +35,7 @@ namespace FYP1_System___Individual.Controllers
             var student = await _context.Students
                 .Include(s => s.Program)
                 .Include(s => s.Proposals)
+                    .ThenInclude(p => p.Supervisor)
                 .FirstOrDefaultAsync(s => s.Id == userId);
 
             if(student == null) return NotFound();
@@ -250,6 +251,8 @@ namespace FYP1_System___Individual.Controllers
         [HttpGet]
         public async Task<IActionResult> Agreement(int proposalId)
         {
+            if (!IsAuthorized("Student")) return RedirectToAction("Index", "Student");
+
             var proposal = await _context.Proposals
                 .Include(p => p.Student)
                 .Include(p => p.Supervisor)

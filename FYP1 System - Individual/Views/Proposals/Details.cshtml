@@ -15,7 +15,7 @@
         <h4 class="mb-3"><strong>Proposal Title:</strong> @Model.Title</h4>
 
         <div class="mb-2"><strong>Student:</strong> @Model.Student?.Name</div>
-        <div class="mb-2"><strong>Supervisor:</strong> @Model.Supervisor?.Name</div>
+        <div class="mb-2"><strong>Supervisor:</strong> @(Model.Supervisor != null ? Model.Supervisor.Name : "Not selected")</div>
         <div class="mb-2"><strong>Project Type:</strong> @Model.ProjectType</div>
         <div class="mb-2"><strong>Semester:</strong> @Model.Semester</div>
         <div class="mb-2"><strong>Session:</strong> @Model.Session</div>
@@ -33,15 +33,25 @@
             </ul>
         </div>
 
-        @* @if (!string.IsNullOrEmpty(Model.FilePath))
+        @if (!string.IsNullOrEmpty(Model.OnlineProposalFormPath))
         {
             <div class="mb-3">
-                <strong>Attached File:</strong>
-                <a asp-controller="Evaluators" asp-action="DownloadDocument" asp-route-path="@Model.FilePath" class="btn btn-sm btn-outline-secondary ms-2">
-                    <i class="bi bi-download"></i> Download PDF
+                <strong>Online Proposal Form:</strong>
+                <a asp-controller="Proposals" asp-action="DownloadFile" asp-route-path="@Model.OnlineProposalFormPath.TrimStart('/')" class="btn btn-sm btn-outline-primary ms-2" target="_blank" rel="noopener">
+                    <i class="bi bi-download"></i> Download Online Proposal Form
                 </a>
             </div>
-        } *@
+        }
+
+        @if (!string.IsNullOrEmpty(Model.ProposalDocumentPath))
+        {
+            <div class="mb-3">
+                <strong>Proposal Document:</strong>
+                <a asp-controller="Proposals" asp-action="DownloadFile" asp-route-path="@Model.ProposalDocumentPath.TrimStart('/')" class="btn btn-sm btn-outline-secondary ms-2" target="_blank" rel="noopener">
+                    <i class="bi bi-download"></i> Download Proposal Document
+                </a>
+            </div>
+        }
 
         <div class="mt-4">
             <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">

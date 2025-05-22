@@ -4,6 +4,7 @@ using FYP1_System___Individual.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FYP1_System___Individual.Migrations
 {
     [DbContext(typeof(FYP1_System_Context))]
-    partial class FYP1_System_ContextModelSnapshot : ModelSnapshot
+    [Migration("20250522140657_add_online_form")]
+    partial class add_online_form
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
