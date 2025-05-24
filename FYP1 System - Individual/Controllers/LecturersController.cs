@@ -33,6 +33,7 @@ namespace FYP1_System___Individual.Controllers
             var lecturer = await _context.Lecturers
                 .Include(l => l.Program)
                 .Include(l => l.SupervisedProposals)
+                    .ThenInclude(p => p.Student)
                 .FirstOrDefaultAsync(l => l.Id == userId);
 
             if (lecturer == null) return NotFound();

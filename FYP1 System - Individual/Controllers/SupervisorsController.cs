@@ -45,8 +45,8 @@ namespace FYP1_System___Individual.Controllers
             var proposals = await query.ToListAsync();
 
             ViewBag.SupervisorId = supervisorId;
-            ViewBag.Semester = (semester != null ? semester : "All");
-            ViewBag.Session = (session != null ? session : "All");
+            ViewBag.Semester = semester;
+            ViewBag.Session = session;
 
             return View(proposals);
         }

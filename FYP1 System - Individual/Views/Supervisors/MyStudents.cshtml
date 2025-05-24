@@ -9,17 +9,24 @@
 <div class="container mt-4">
     <h2 class="text-center mb-4 text-primary">@ViewData["Title"]</h2>
 
-    <form method="get" asp-action="MyStudents" class="row g-3 mb-4">
-        <input type="hidden" name="supervisorId" value="@supervisorId" />
-
+    <form asp-action="MyStudents" method="get" class="row g-2 align-items-end mb-4">
         <div class="col-md-4">
             <label class="form-label">Semester</label>
-            <input type="text" name="semester" class="form-control" value="@(semester != "All" ? semester : "")" placeholder="e.g., S1 2024/2025" />
+            <select name="semester" class="form-select">
+                <option value="">-- All --</option>
+                <option value="S1" selected="@(semester == "S1")">S1</option>
+                <option value="S2" selected="@(semester == "S2")">S2</option>
+            </select>
         </div>
 
         <div class="col-md-4">
             <label class="form-label">Session</label>
-            <input type="text" name="session" class="form-control" value="@(session != "All" ? session : "")" placeholder="optional" />
+            <select name="session" class="form-select">
+                <option value="">-- All --</option>
+                <option value="2024/2025" selected="@(session == "2024/2025")">2024/2025</option>
+                <option value="2023/2024" selected="@(session == "2023/2024")">2023/2024</option>
+                <option value="2022/2023" selected="@(session == "2022/2023")">2022/2023</option>
+            </select>
         </div>
 
         <div class="col-md-4 d-flex align-items-end">

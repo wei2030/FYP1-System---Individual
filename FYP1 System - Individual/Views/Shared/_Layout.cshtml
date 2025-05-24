@@ -1,66 +1,118 @@
 ﻿@{
-    var roles = (Context.Session.GetString("Roles") != null ? Context.Session.GetString("Roles") : "");
-    bool isCommittee = roles.Split(',').Contains("Committee");
+    var roles = Context.Session.GetString("Roles") ?? "";
+    var roleList = roles.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+    bool isCommittee = roleList.Contains("Committee");
+    bool isStudent = roleList.Contains("Student");
+    bool isLecturer = roleList.Contains("Lecturer") || roleList.Contains("Supervisor");
+    bool isEvaluator = roleList.Contains("Evaluator");
+
+    bool hasRoles = roleList.Length > 0;
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] - FYP1_System___Individual</title>
-    <script type="importmap"></script>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FYP1_System___Individual.styles.css" asp-append-version="true" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+
+    <script type="importmap"></script>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FYP1_System___Individual</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
+                @{
+                    string dashboardController = "Home";
+                    string dashboardAction = "Index";
+
+                    if (isStudent)
+                    {
+                        dashboardController = "Students";
+                        dashboardAction = "Index";
+                    }
+                    else if (isLecturer)
+                    {
+                        dashboardController = "Lecturers";
+                        dashboardAction = "Index";
+                    }
+                    else if (isEvaluator)
+                    {
+                        dashboardController = "Evaluators";
+                        dashboardAction = "AssignedProposals"; // or Evaluator dashboard action
+                    }
+                    else if (isCommittee)
+                    {
+                        dashboardController = "Committees";
+                        dashboardAction = "AssignDomain"; // or Committee dashboard action
+                    }
+                }
+                <a class="navbar-brand" asp-controller="@dashboardController" asp-action="@dashboardAction">FYP1_System___Individual</a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
 
-                        @if (isCommittee)
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-sm-0">
+                        @if (hasRoles)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Committees" asp-action="AssignDomain">Assign Domain</a>
-                            </li>
+                            if (isCommittee)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Committees" asp-action="AssignDomain">Assign Domain</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Committees" asp-action="ManageProposals">Manage Proposals</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Committees" asp-action="PendingSupervisorApprovals">Pending Supervisor Approvals</a>
+                                </li>
+                            }
 
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Committees" asp-action="ManageProposals">Manage Proposal</a>
-                            </li>
+                            if (isEvaluator)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Evaluators" asp-action="AssignedProposals">Evaluator Dashboard</a>
+                                </li>
+                            }
                         }
                     </ul>
+
+                    @if (hasRoles)
+                    {
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" asp-controller="Home" asp-action="Logout">Logout</a>
+                            </li>
+                        </ul>
+                    }
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
+    <main role="main" class="container pb-3">
+        @RenderBody()
+    </main>
+
+    <footer class="border-top footer text-muted mt-auto py-3">
+        <div class="container text-center">
             &copy; 2025 - FYP1_System___Individual - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
