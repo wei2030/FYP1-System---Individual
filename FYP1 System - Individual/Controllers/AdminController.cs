@@ -20,26 +20,10 @@ namespace FYP1_System___Individual.Controllers
             return roles != null && roles.Split(',').Contains(role, StringComparer.OrdinalIgnoreCase);
         }
 
-        //public async Task<IActionResult> Index()
-        //{
-        //    if (!IsAuthorized("Admin")) return RedirectToAction("Index", "Home");
-
-        //    ViewBag.ProgramCount = await _context.AcademicPrograms.CountAsync();
-        //    ViewBag.LecturerCount = await _context.Lecturers.CountAsync();
-        //    ViewBag.StudentCount = await _context.Students.CountAsync();
-        //    ViewBag.CommitteesPerProgram = await _context.AcademicPrograms
-        //        .Select(p => new
-        //        {
-        //            ProgramName = p.Name,
-        //            CommitteeCount = p.Lecturers.Count(l => l.HasRole("Committee"))
-        //        })
-        //        .ToListAsync();
-
-        //    return View();
-        //}
-
         public async Task<IActionResult> Index()
         {
+            if (!IsAuthorized("Admin")) return RedirectToAction("Index", "Home");
+
             var totalPrograms = await _context.AcademicPrograms.CountAsync();
             var totalLecturers = await _context.Lecturers.CountAsync();
 
